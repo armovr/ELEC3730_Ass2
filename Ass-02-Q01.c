@@ -1,6 +1,4 @@
-//     $Date: 2017-04-04 04:00:13 +1000 (Tue, 04 Apr 2017) $
-// $Revision: 872 $
-//   $Author: Peter $
+
 
 #include "Ass-02.h"
 #include "usart.h"
@@ -8,72 +6,50 @@
 // REPLACE THE EXAMPLE CODE WITH YOUR CODE
 //Initialise the Command List using the Structure type of command_s
 
-
+volatile uint8_t Debug = 0;
 
 const command_s CommandList[] = {
-		{(int8_t *)"add", &Add_Function, (int8_t *)"add <num_1> +...+ <num_n>"},
-		{(int8_t *)"sub", &Sub_Function, (int8_t *) "sub <num_1> -...- <num_n>"},
-		{(int8_t *)"mul", &Mul_Function, (int8_t *)"mul <num_1> *...* <num_n>"},
-		{(int8_t *)"div", &Div_Function, (int8_t *) "div <num_1> /<num_2>"},
-		{(int8_t *)"help", &Help_Function, (int8_t *)"help [command]: Prints help information for a command"},
-		{(int8_t *)"debug", &Debug_Function, (int8_t *)"debug <on|off>"},
-		{(int8_t *)"clear", &Clear_Function, (int8_t *)"clears the terminal window"},
-		{(int8_t *)"clc", &Clear_Function, (int8_t *)"clears the terminal window"},
+		{(int8_t *)"add", &AddFunc, (int8_t *)"add <num_1> +...+ <num_n>"},
+		{(int8_t *)"sub", &SubFunc, (int8_t *) "sub <num_1> -...- <num_n>"},
+		{(int8_t *)"mul", &MulFunc, (int8_t *)"mul <num_1> *...* <num_n>"},
+		{(int8_t *)"div", &DivFunc, (int8_t *) "div <num_1> /<num_2>"},
+		{(int8_t *)"help", &HelpFunc, (int8_t *)"help [command]: Prints help information for a command"},
+		{(int8_t *)"debug", &DebugFunc, (int8_t *)"debug <on|off>"},
+		{(int8_t *)"clear", &ClearFunc, (int8_t *)"clears the terminal window"},
 		{NULL, NULL, NULL}
 };
 
-/*
- * Function: Add_Function
- * ----------------------------
- *   Returns the Add of all the arguments passed into the function
- *
- *	ArgNum = number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument wordsdebug
- *
- */
-int8_t Clear_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	//printf("IN the Clear function\n\r");
-	printf("\014");
-	printf("ELEC3730 Assignment 2\n\r");
-	return -1;
+// "Clears" terminal window
+int8_t ClearFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
+
+	printf("\014"); //New Page
+	printf("ELEC3730 Assignment 2\n\r"); //Intro
+	return 0;
 
 }
 
 
-
-
-/*
- * Function: Add_Function
- * ----------------------------
- *   Returns the Add of all the arguments passed into the function
- *
- *	ArgNum = number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
- *
- */
-int8_t Add_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+// Adds Arguments Together
+int8_t AddFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 	float result=0;
 	uint8_t i;
-	//printf("IN the ADD function\n\r");
 	if(ArgNum > 2){
 		for(i = 1; i<ArgNum; i++){
-			//Convert the input the string to a float and add to result
 			result += atof((char*)ArgStrings[i]);
 		}
 		printf("Result = %g\n\r",result);
 	}
 	else{
-		//No enough arguments have been entered
-		printf("Not enough arguments have been entered for the add function,\n\renter 'add help' for help\n\r");
+		printf("Need at least 2 inputs\n\r");
 	}
 
-	return -1;
+	return 0;
 
 }
 
 
 /*
- * Function: Sub_Function
+ * Function: SubFunc
  * ----------------------------
   *	Calculates the Subtraction between String A - String B  - ...- String N
  *
@@ -84,7 +60,7 @@ int8_t Add_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *	*ArgString[] = array of pointers to the start of the argument words
  *
  */
-int8_t Sub_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+int8_t SubFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 	float result = 0;
 	uint8_t i;
 	//printf("IN the Sub function\n\r");
@@ -105,7 +81,7 @@ int8_t Sub_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 }
 
 /*
- * Function: Mul_Function
+ * Function: MulFunc
  * ----------------------------
  *	Calculates the Multiplication between String A * String B  * ...* String N
  *	Returns -1
@@ -115,7 +91,7 @@ int8_t Sub_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *	*ArgString[] = array of pointers to the start of the argument words
  *
  */
-int8_t Mul_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+int8_t MulFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 	float result = 1;
 	int8_t ERR = 0;
 	uint8_t i, j;
@@ -186,7 +162,7 @@ int8_t Mul_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 
 
 /*
- * Function: Div_Function
+ * Function: DivFunc
  * ----------------------------
  *	Calculates the Division of String A and String B
  *	Returns -1
@@ -196,7 +172,8 @@ int8_t Mul_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *	*ArgString[] = array of pointers to the start of the argument words
  *
  */
-int8_t Div_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+int8_t DivFunc(uint8_t ArgNum, uint8_t *ArgStrings[])
+{
 	float result;
 	//printf("IN the Div function\n\r");
 	uint8_t i,j;
@@ -245,7 +222,7 @@ int8_t Div_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 }
 
 /*
- * Function: Help_Function
+ * Function: HelpFunc
  * ----------------------------
  *   Prints out the help description of a specific function,
  *   or the entire list of possible commands in the command line interface
@@ -254,7 +231,8 @@ int8_t Div_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *	 *ArgString[] = array of pointers to the start of the argument words
  *
  */
-int8_t Help_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+int8_t HelpFunc(uint8_t ArgNum, uint8_t *ArgStrings[])
+{
 	uint8_t j,i;
 	//printf("IN the Help function\n\r");
 	if(ArgNum == 1){
@@ -282,7 +260,7 @@ int8_t Help_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 
 
 /*
- * Function:Debug_Function
+ * Function:DebugFunc
  * ----------------------------
  *   Prints out the help description of a specific function
  *  Returns: Debug_State ==1 ON// Debug_State == 0 OFF
@@ -292,7 +270,7 @@ int8_t Help_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *	*ArgString[] = array of pointers to the start of the argument words
  *
  */
-int8_t Debug_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
+int8_t DebugFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 	//Check that only 2 arguments are entered
 	if(ArgNum >2){
 		printf("Too many arguments entered for the debug function,\r\ntype 'help debug' for help\r\n");
@@ -301,23 +279,44 @@ int8_t Debug_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 		//Correct amount of arguments have been entered, determine which state to toggle too
 		//Check the input String, to determine which State to toggle Debug_State to
 		if(strcasecmp((char *)ArgStrings[1],"On")==0){
-			printf("Debug has been turned on\n\r");
-			Debug = 1;
+
+			if(Debug == 1)
+			{
+				printf("Debug is already ON\n\r");
+			}
+			else
+			{
+				printf("Debug has been turned ON\n\r");
+				Debug = 1;
+			}
 		}
 		else if(strcasecmp((char *)ArgStrings[1],"Off")==0){
-			printf("Debug has been turned off\n\r");
-			Debug = 0;
+			if(Debug == 0)
+			{
+				printf("Debug is already OFF\n\r");
+			}
+			else
+			{
+				printf("Debug has been turned OFF\n\r");
+				Debug = 0;
+			}
 		}
 		else{
 			printf("Input argument not recognised,\r\ntype 'help debug' for help\r\n");
-
 		}
 	}
 	else{
-		printf("Not enough arguments have been entered for the debug function,\r\ntype 'help debug' for help\r\n");
+		if(Debug == 1)
+		{
+			printf("Debug is ON\n\r");
+		}
+		else if(Debug == 0)
+		{
+			printf("Debug is OFF\n\r");
+		}
 	}
 
-	return -1;
+	return 0;
 }
 
 
@@ -367,7 +366,7 @@ void CommandLineParserProcess(void)
     else{
     	//Either Overflow of data or Enter was pressed
     	if(i == 100){
-    		//Overflow has occured, continue process with this string size
+    		//Overflow has occurred, continue process with this string size
     		printf("\nError to many characters entered in command line\n\r");
     	}
     	//Proceed and terminate string with a null character
@@ -397,16 +396,16 @@ void CommandLineParserProcess(void)
 
     		//**********************************************************************//
     		//Find out which command was entered and do calculation
-        	while(CommandList[j].NameString != NULL){
+        	for(j=0; CommandList[j].NameString != NULL; j++){
     			if(strcasecmp((char *)array_of_words_pp[0],(char *) CommandList[j].NameString) == 0){
         			//Now do the correct operation based on the match
         			(*CommandList[j].Function_p)(count, array_of_words_pp);
+        			break;
     			}
-    			j++;
         	}
         	if(CommandList[j].NameString == NULL){
-        		printf("Input not recognised, please enter as follows:\n\r");
-        		Help_Function(0,0);
+        		printf("\nInput not recognised, please enter as follows:\n\r");
+        		HelpFunc(1,"help");
         	}
 		}
 		else{
