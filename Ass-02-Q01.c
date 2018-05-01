@@ -8,7 +8,7 @@
 // REPLACE THE EXAMPLE CODE WITH YOUR CODE
 //Initialise the Command List using the Structure type of command_s
 
-volatile uint8_t Debug = 0;
+
 
 const command_s CommandList[] = {
 		{(int8_t *)"add", &Add_Function, (int8_t *)"add <num_1> +...+ <num_n>"},
@@ -28,7 +28,7 @@ const command_s CommandList[] = {
  *   Returns the Add of all the arguments passed into the function
  *
  *	ArgNum = number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
+ *	*ArgString[] = array of pointers to the start of the argument wordsdebug
  *
  */
 int8_t Clear_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
@@ -85,7 +85,7 @@ int8_t Add_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *
  */
 int8_t Sub_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	float result =0;
+	float result = 0;
 	uint8_t i;
 	//printf("IN the Sub function\n\r");
 	if(ArgNum > 2){
@@ -116,7 +116,7 @@ int8_t Sub_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
  *
  */
 int8_t Mul_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	float result =1;
+	float result = 1;
 	int8_t ERR = 0;
 	uint8_t i, j;
 	//printf("IN the Mul function\n\r");
@@ -309,7 +309,7 @@ int8_t Debug_Function(uint8_t ArgNum, uint8_t *ArgStrings[]){
 			Debug = 0;
 		}
 		else{
-			printf("Input argument has not been found,\r\ntype 'help debug' for help\r\n");
+			printf("Input argument not recognised,\r\ntype 'help debug' for help\r\n");
 
 		}
 	}
@@ -397,11 +397,16 @@ void CommandLineParserProcess(void)
 
     		//**********************************************************************//
     		//Find out which command was entered and do calculation
-        	for(j=0;  CommandList[j].NameString != NULL; j++){
+        	while(CommandList[j].NameString != NULL){
     			if(strcasecmp((char *)array_of_words_pp[0],(char *) CommandList[j].NameString) == 0){
         			//Now do the correct operation based on the match
         			(*CommandList[j].Function_p)(count, array_of_words_pp);
     			}
+    			j++;
+        	}
+        	if(CommandList[j].NameString == NULL){
+        		printf("Input not recognised, please enter as follows:\n\r");
+        		Help_Function(0,0);
         	}
 		}
 		else{
