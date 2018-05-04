@@ -11,6 +11,7 @@
 // STEPIEN: Added two touch panel functions to make the interface more
 //          consistent with the LCD BSP.
 
+
 #ifdef STM32F407xx
 uint8_t BSP_TP_Init(void)
 {

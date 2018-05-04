@@ -20,6 +20,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 //Variables
 #define LIMIT 101
@@ -33,15 +34,14 @@ typedef struct{
 }command_s;
 
 typedef struct{
-	uint8_t *Character_String;
-	uint16_t Loc[4];
-	uint8_t *Font;
-	uint32_t BackColour;
-	uint32_t ToggleColour;
-	uint32_t TextColour;
-	Line_ModeTypdef MODE;
-	int8_t OffSet[2];
-	float (*Opperation_p)(uint8_t* arg1, uint8_t* arg2);
+	uint8_t *display;
+	uint16_t co_ord[4];
+	uint8_t *font;
+	uint32_t colour;
+	uint32_t fontColour;
+	Line_ModeTypdef lineMode;
+	int8_t offSet[2];
+	float (*operatorFunc)(uint8_t* arg1, uint8_t* arg2);
 }button_s;
 
 // Assignment main
@@ -52,13 +52,17 @@ extern void Ass_02_Main(void);
 //
 
 // Question 1
-extern int8_t AddFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t SubFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t MulFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t DivFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t HelpFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t DebugFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
-extern int8_t ClearFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Add (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Sub (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Mul (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Div (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Help (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_DebugFunc (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Clear (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Sin (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Cos (uint8_t ArgNum, uint8_t *ArgStrings[]);
+extern int8_t Ser_Tan (uint8_t ArgNum, uint8_t *ArgStrings[]);
+
 
 extern void CommandLineParserInit(void);
 extern void CommandLineParserProcess(void);
@@ -70,18 +74,21 @@ extern void CalculatorInit(void);
 extern void CalculatorProcess(void);
 
 //LCD Calculator Functions
-void DrawButton(uint8_t DrawButton, uint8_t Toggle);
-int8_t FindPress(uint16_t X_Pos, uint16_t Y_Pos);
-void Print_To_Screen(uint8_t *String_p, uint8_t Button);
-void Clear_Button(uint8_t Button);
-void Clear_Array(uint8_t *Array_p);
+extern void DrawButton(uint8_t DrawButton, uint8_t Toggle);
+extern int8_t FindPress(uint16_t X_Pos, uint16_t Y_Pos);
+extern void Print_To_Screen(uint8_t *String_p, uint8_t Button);
+extern void Clear_Button(uint8_t Button);
+extern void Clear_Array(uint8_t *Array_p);
 
-float Calc_0(uint8_t *arg1, uint8_t *arg2);
-float Calc_Add(uint8_t *arg1, uint8_t *arg2);
-float Calc_Sub(uint8_t *arg1, uint8_t *arg2);
-float Calc_Mul(uint8_t *arg1, uint8_t *arg2);
-float Calc_Div(uint8_t *arg1, uint8_t *arg2);
-float Calc_Mod(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_0(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Add(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Sub(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Mul(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Div(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Mod(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Mod(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Sin(uint8_t *arg1, uint8_t *arg2);
+extern float Calc_Debug(void);
 
 // Library functions
 #ifdef STM32F407xx
@@ -90,3 +97,4 @@ extern uint8_t BSP_TP_GetDisplayPoint(Coordinate *pDisplay);
 #endif
 
 #endif /* ASS_02_H_ */
+

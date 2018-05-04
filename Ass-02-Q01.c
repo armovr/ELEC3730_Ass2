@@ -1,241 +1,282 @@
-
-
 #include "Ass-02.h"
 #include "usart.h"
-//
-// REPLACE THE EXAMPLE CODE WITH YOUR CODE
-//Initialise the Command List using the Structure type of command_s
 
 volatile uint8_t Debug = 0;
 
-const command_s CommandList[] = {
-		{(int8_t *)"add", &AddFunc, (int8_t *)"add <num_1> +...+ <num_n>"},
-		{(int8_t *)"sub", &SubFunc, (int8_t *) "sub <num_1> -...- <num_n>"},
-		{(int8_t *)"mul", &MulFunc, (int8_t *)"mul <num_1> *...* <num_n>"},
-		{(int8_t *)"div", &DivFunc, (int8_t *) "div <num_1> /<num_2>"},
-		{(int8_t *)"help", &HelpFunc, (int8_t *)"help [command]: Prints help information for a command"},
+
+/*
+ * STRUCTURE CONTAINING ALL POSSIBLE ACCEPTED COMMANDS
+ */
+const command_s CommandList[] =
+{
+		{(int8_t *)"add", &Add, (int8_t *)"add <num_1> +...+ <num_n>"},
+		{(int8_t *)"sub", &Sub, (int8_t *) "sub <num_1> -...- <num_n>"},
+		{(int8_t *)"mul", &Mul, (int8_t *)"mul <num_1> *...* <num_n>"},
+		{(int8_t *)"div", &Div, (int8_t *) "div <num_1> /<num_2>"},
+		{(int8_t *)"help", &Help, (int8_t *)"help [command]: Prints help information for a command"},
 		{(int8_t *)"debug", &DebugFunc, (int8_t *)"debug <on|off>"},
-		{(int8_t *)"clear", &ClearFunc, (int8_t *)"clears the terminal window"},
+		{(int8_t *)"clear", &Clear, (int8_t *)"clears the terminal window"},
+		{(int8_t *)"sin", &Sin, (int8_t *)"sin <num_1> returns the value of sine(num_1)"},
+		{(int8_t *)"cos", &Cos, (int8_t *)"cos <num_1> returns the value of cosine(num_1)"},
+		{(int8_t *)"tan", &Tan, (int8_t *)"tan <num_1> returns the value of tan(num_1)"},
 		{NULL, NULL, NULL}
 };
 
-// "Clears" terminal window
-int8_t ClearFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
-
+/*
+ * FUNCTION: CLEAR
+ * PURPOSE:  CLEARS THE SERIAL PORT ON PUTTY
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  NOTHING
+ */
+void Ser_Clear(uint8_t Argument_Num, uint8_t *Arg_Strings[]){
 	printf("\014"); //New Page
 	printf("ELEC3730 Assignment 2\n\r"); //Intro
-	return 0;
-
 }
-
-
-// Adds Arguments Together
-int8_t AddFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	float result=0;
-	uint8_t i;
-	if(ArgNum > 2){
-		for(i = 1; i<ArgNum; i++){
-			result += atof((char*)ArgStrings[i]);
-		}
-		printf("Result = %g\n\r",result);
-	}
-	else{
-		printf("Need at least 2 inputs\n\r");
-	}
-
-	return 0;
-
-}
-
 
 /*
- * Function: SubFunc
- * ----------------------------
-  *	Calculates the Subtraction between String A - String B  - ...- String N
- *
- *	Returns -1
- *
- *	INPUTS:
- *	ArgNum =number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
- *
+ * FUNCTION: ADD
+ * PURPOSE:  ADDS THE TWO VALUES STORED IN THE ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  THE RESULT OF THE SUM SAVED IN THE rslt VARIABLE
  */
-int8_t SubFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	float result = 0;
+void Ser_Add(uint8_t Argument_Num, uint8_t *Arg_Strings[])
+{
+	float rslt=0;
+	uint8_t i,j;
+	if(Arg_Strings[i][j] < 46 || Arg_Strings[i][j] > 57 || Arg_Strings[i][j]==47)
+	{
+		printf("Expected only numbers input. Type 'Help add' for explanation.\n\r");
+	}
+	else if (Arg_Strings[i][j]==46 || 48<=Arg_Strings[i][j]<=57)
+	{
+		if(Argument_Num > 2)
+		{
+			for(i = 1; i<Argument_Num; i++)
+			{
+				rslt += atof((char*)Arg_Strings[i]);
+			}
+			printf("rslt = %g\n\r",rslt);
+		}
+		else
+		{
+			printf("Need at least 2 inputs\n\r");
+		}
+	}
+}
+
+/*
+ * FUNCTION: SIN
+ * PURPOSE:  FINDS THE SINE RATIO OF THE FIRST VARIABLE STORED IN ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  SINE RATIO STORED IN rslt VARIABLE
+ */
+void Ser_Sin(uint8_t Argument_Num, uint8_t *Arg_Strings[]){
+	float rslt=0,Read_Val;
+	if(Argument_Num == 2)
+	{
+		Read_Val=atof((char*)Arg_Strings[1]);
+		rslt = sin(Read_Val*(3.14159265/180));
+		printf("rslt = %g degrees\n\r",rslt);
+	}
+	else if (Argument_Num==0 || Argument_Num==1)
+	{
+		printf("Need at least 1 inputs\n\r");
+	}
+	else
+	{
+		printf("Too many arguments. Type 'help sin' for more info\n");
+	}
+}
+
+/*
+ * FUNCTION: COS
+ * PURPOSE:  FINDS THE COSINE RATIO OF THE FIRST VARIABLE STORED IN ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  COSINE RATIO STORED IN rslt VARIABLE
+ */
+void Ser_Cos(uint8_t Argument_Num, uint8_t *Arg_Strings[]){
+	float rslt=0,Read_Val;
+	if(Argument_Num == 2)
+	{
+		Read_Val=atof((char*)Arg_Strings[1]);
+		rslt = cos(Read_Val*(3.14159265/180));
+		printf("rslt = %g%d\n\r",rslt,248);
+	}
+	else if (Argument_Num==0 || Argument_Num==1)
+	{
+		printf("Need at least 1 inputs\n\r");
+	}
+	else
+	{
+		printf("Too many arguments. Type 'help sin' for more info\n");
+	}
+}
+
+/*
+ * FUNCTION: TAN
+ * PURPOSE:  FINDS THE TAN RATIO OF THE FIRST VARIABLE STORED IN ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  TAN RATIO STORED IN rslt VARIABLE
+ */
+void Ser_Tan(uint8_t Argument_Num, uint8_t *Arg_Strings[])
+{
+	float rslt=0, Read_Val;
+	if(Argument_Num == 2)
+	{
+		Read_Val=(atof((char*)Arg_Strings[1]));
+		rslt = tan(Read_Val*(3.14159265/180));
+		printf("rslt = %g\n\r",rslt);
+	}
+	else if (Argument_Num==0 || Argument_Num==1)
+	{
+		printf("Need at least 1 inputs\n\r");
+	}
+	else
+	{
+		printf("Too many arguments. Type 'help sin' for more info\n");
+	}
+}
+
+/*
+ * FUNCTION: SUB
+ * PURPOSE:  SUBTRACTS THE TWO VALUES STORED IN THE ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  THE DIFFERENCE OF THE VARIABLES SAVED IN THE rslt VARIABLE
+ */
+void Ser_Sub(uint8_t Argument_Num, uint8_t *Arg_Strings[])
+{
+	float rslt = 0;
 	uint8_t i;
 	//printf("IN the Sub function\n\r");
-	if(ArgNum > 2){
+	if(Argument_Num > 2){
 		//Checks correct number of arguments have been entered
-		result = atof((char*)ArgStrings[1]);
-		for(i = 2; i<ArgNum; i++){
-			result = result - atof((char*)ArgStrings[i]);
+		rslt = atof((char*)Arg_Strings[1]);
+		printf("\n%d\n",rslt);
+		for(i = 2; i<Argument_Num; i++){
+			rslt = rslt - atof((char*)Arg_Strings[i]);
 		}
-		printf("Result = %g\n\r",result);
+		printf("rslt = %g\n\r",rslt);
 	}
-	else{
+	else
+	{
 		printf("Not enough arguments have been entered for the sub function,\n\renter 'help sub' for help\n\r");
 	}
-
-	return -1;
-
 }
 
 /*
- * Function: MulFunc
- * ----------------------------
- *	Calculates the Multiplication between String A * String B  * ...* String N
- *	Returns -1
- *
- *	INPUTS:
- *	ArgNum =number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
- *
+ * FUNCTION: MUL
+ * PURPOSE:  MULTIPLIES THE TWO VALUES STORED IN THE ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  THE RESULT OF THE MULTIPLIED VARIABLES SAVED IN THE rslt VARIABLE
  */
-int8_t MulFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
-	float result = 1;
-	int8_t ERR = 0;
+void Ser_Mul(uint8_t Argument_Num, uint8_t *Arg_Strings[]){
+	float rslt = 1;
+	int8_t Err_Flag = 0;
 	uint8_t i, j;
-	//printf("IN the Mul function\n\r");
-	if(ArgNum>2){
-		for(i=1; i<ArgNum; i++){
-			result *= atof((char*)ArgStrings[i]);
+	if(Argument_Num>2){
+		for(i=1; i<Argument_Num; i++){
+			rslt *= atof((char*)Arg_Strings[i]);
 			j = 0;
-			while(ArgStrings[i][j] != '\0')
+			while(Arg_Strings[i][j] != '\0')
 			{
 				if (Debug==1)
 				{
-					printf("arg %i\n\r", ArgStrings[i][j]);
+					printf("arg %i\n\r", Arg_Strings[i][j]);
 				}
 				/*
 				  THIS FUNCTION ACCEPTS ALL NUMBERS AND THE CHARACTERS OF "." AND "/"
 				  WE SHOULD MAKE IT TO NOT TAKE IN "/"
 				*/
-				if(ArgStrings[i][j] < 46 || ArgStrings[i][j] > 57 || ArgStrings[i][j]==47)
+				if(Arg_Strings[i][j] < 46 || Arg_Strings[i][j] > 57 || Arg_Strings[i][j]==47)
 				{
 
 					printf("ERROR: Operator Expects number in arg %i\n\r", i);
-					printf("Interpreted Value: %g\n\r", atof((char*)ArgStrings[i]));
-					ERR = 1;
+					printf("Interpreted Value: %g\n\r", atof((char*)Arg_Strings[i]));
+					Err_Flag = 1;
 					break;
 				}
-				/*float Reslt=atof((char*)ArgStrings[i]);
-				if (Reslt==0)
-				{
-					printf("Error Within Inputs, two numbers expected\n\r");
-					ERR=1;
-					break;
-				}
-				else
-				{
-					if (Reslt!=ArgStrings[i][j])
-					{
-						printf("Result = %g\n\r", result);
-						break;
-					}
-
-				}
-				*/
-
 				j++;
 			}
 		}
-		if(ERR == 1)
+		if(Err_Flag == 1)
 		{
-			printf("Possible Result from interpreted arguments : %g\n\r",result);
-			ERR = 0;
+			printf("Possible rslt from interpreted arguments : %g\n\r",rslt);
+			Err_Flag = 0;
 		}
 		else
 		{
-			printf("Result = %g\n\r",result);
+			printf("rslt = %g\n\r",rslt);
 		}
 	}
 	else{
 		printf("Not enough arguments entered for the mul function,\n\r enter 'help mul' for help\n\r");
 	}
-
-	return -1;
 }
 
-
-
-
-
-
 /*
- * Function: DivFunc
- * ----------------------------
- *	Calculates the Division of String A and String B
- *	Returns -1
- *
- *	INPUTS:
- *	ArgNum =number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
- *
+ * FUNCTION: DIV
+ * PURPOSE:  DIVIDES THE TWO VALUES STORED IN THE ARG_STRINGS
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  THE DIVISION OF THE TWO SAVED IN THE rslt VARIABLE
  */
-int8_t DivFunc(uint8_t ArgNum, uint8_t *ArgStrings[])
+void Ser_Div(uint8_t Argument_Num, uint8_t *Arg_Strings[])
 {
-	float result;
+	float rslt;
 	//printf("IN the Div function\n\r");
 	uint8_t i,j;
-	int8_t ERR = 0;
-	if(ArgNum>3){
+	int8_t Err_Flag = 0;
+	if(Argument_Num>3){
 		//To many arguments have been entered
 		printf("Too many arguments have been entered for the divide operator,\n\r type 'help div' for help\n\r");
 	}
-	if(ArgNum>2){ //Correct number of arguments have been entered for the divide function
-		for(i=1; i<ArgNum; i++){
+	if(Argument_Num>2){ //Correct number of arguments have been entered for the divide function
+		for(i=1; i<Argument_Num; i++){
 			j = 0;
 			//Loop through each input string until NULL terminator is reached
-			while(ArgStrings[i][j] != '\0')
+			while(Arg_Strings[i][j] != '\0')
 			{
 				//Check each character in the string is a ASCII CODE for a number
-				if(ArgStrings[i][j] < 46 || ArgStrings[i][j] > 57 || ArgStrings[i][j] == 47)
+				if(Arg_Strings[i][j] < 46 || Arg_Strings[i][j] > 57 || Arg_Strings[i][j] == 47)
 				{
 					//Character in the string was found to contain a Number character ASCII value
 					//Report error and break out of loop
 					printf("ERROR: Opperator Expects number in arg %i\n\r", i);
-					printf("Interpreted Value: %g\n\r", atof((char*)ArgStrings[i]));
-					ERR = 1;
+					printf("Interpreted Value: %g\n\r", atof((char*)Arg_Strings[i]));
+					Err_Flag = 1;
 					break;
 				}
 				j++;
 			}
-			//Do the calculaion
-			result = atof((char*)ArgStrings[1])/atof((char*)ArgStrings[2]);
+			//Do the calculation
+			rslt = atof((char*)Arg_Strings[1])/atof((char*)Arg_Strings[2]);
 		}
-		if(ERR == 1)
+		if(Err_Flag == 1)
 		{
-			printf("Possible Result from interpreted arguments : %g\n\r",result);
-			ERR = 0;
+			printf("Possible result from interpreted arguments : %g\n\r",rslt);
+			Err_Flag = 0;
 		}
 		else
 		{
-			printf("Result : %g\n\r",result);
+			printf("rslt : %g\n\r",rslt);
 		}
 	}
 	else{
-		//Not enough arguements have been entered
+		//Not enough arguments have been entered
 		printf("Not enough arguments entered for the mul function,\n\r enter 'help mul' for help\n\r");
 	}
-	return -1;
-
 }
 
 /*
- * Function: HelpFunc
- * ----------------------------
- *   Prints out the help description of a specific function,
- *   or the entire list of possible commands in the command line interface
- *
- *	 ArgNum =number of arguments expected for calculation
- *	 *ArgString[] = array of pointers to the start of the argument words
- *
+ * FUNCTION: HELP
+ * PURPOSE:  PROVIDES A HELP MENU ON PUTTY
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  NOTHING
  */
-int8_t HelpFunc(uint8_t ArgNum, uint8_t *ArgStrings[])
+void Ser_Help(uint8_t Argument_Num, uint8_t *Arg_Strings[])
 {
 	uint8_t j,i;
 	//printf("IN the Help function\n\r");
-	if(ArgNum == 1){
+	if(Argument_Num == 1){
 		printf("\tCommand\tHelp\n\r");
 		//Steps through all of the Commands
 		for(i = 0; CommandList[i].NameString != 0;i++){
@@ -244,41 +285,34 @@ int8_t HelpFunc(uint8_t ArgNum, uint8_t *ArgStrings[])
 	}
 	else{
 		//Loop through all the arguments and print there corresponding help strings
-		for(i=1; i<ArgNum;i++){
+		for(i=1; i<Argument_Num;i++){
 			//Loop through all the functions and find which function string matches the entered input string
 			for(j=0;CommandList[j].NameString != NULL; j++){
-				if(strcasecmp((char *)ArgStrings[i],(char *) CommandList[j].NameString) == 0){
+				if(strcasecmp((char *)Arg_Strings[i],(char *) CommandList[j].NameString) == 0){
 					printf("%s\n\r",(char *) CommandList[j].HelpString);
 				}
 			}
 		}
 
 	}
-
-	return -1;
 }
 
-
 /*
- * Function:DebugFunc
- * ----------------------------
- *   Prints out the help description of a specific function
- *  Returns: Debug_State ==1 ON// Debug_State == 0 OFF
- *
- *  Inputs:
- *	ArgNum =number of arguments expected for calculation
- *	*ArgString[] = array of pointers to the start of the argument words
- *
+ * FUNCTION: DEBUG
+ * PURPOSE:  PROVIDES FEEDBACK FROM EVERY STEP OF THE CODE, ALLOWING
+ * 			 FOR MORE EASY DEBUGGING
+ * INPUTS:   NUMBER OF ARGUMENTS AND THE ARGUMENTS THEMSELVES
+ * OUTPUTS:  PRINTS THE STEPS OF CODE ONTO PUTTY
  */
-int8_t DebugFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
+void Ser_DebugFunc(uint8_t Argument_Num, uint8_t *Arg_Strings[]){
 	//Check that only 2 arguments are entered
-	if(ArgNum >2){
+	if(Argument_Num >2){
 		printf("Too many arguments entered for the debug function,\r\ntype 'help debug' for help\r\n");
 	}
-	else if(ArgNum>1){
+	else if(Argument_Num>1){
 		//Correct amount of arguments have been entered, determine which state to toggle too
 		//Check the input String, to determine which State to toggle Debug_State to
-		if(strcasecmp((char *)ArgStrings[1],"On")==0){
+		if(strcasecmp((char *)Arg_Strings[1],"On")==0){
 
 			if(Debug == 1)
 			{
@@ -290,7 +324,7 @@ int8_t DebugFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 				Debug = 1;
 			}
 		}
-		else if(strcasecmp((char *)ArgStrings[1],"Off")==0){
+		else if(strcasecmp((char *)Arg_Strings[1],"Off")==0){
 			if(Debug == 0)
 			{
 				printf("Debug is already OFF\n\r");
@@ -315,40 +349,36 @@ int8_t DebugFunc(uint8_t ArgNum, uint8_t *ArgStrings[]){
 			printf("Debug is OFF\n\r");
 		}
 	}
-
-	return 0;
 }
 
-
+/*
+ * FUNCTION: COMMANDLINEPARSERINIT
+ * PURPOSE:  INITIALISES THE PARSER
+ * INPUTS:   NOTHING
+ * OUTPUTS:  NOTHING
+ */
 void CommandLineParserInit(void)
 {
   // Print welcome message
   printf("\014");
   printf("ELEC3730 Assignment 2\n\r");
-  printf("Command Line Parser Example\n\r");
+  printf("Zach Honan and Nic Rodgers - c3206664 and c3206083\n\r");
 
 }
 
-
-
 /*
- * Function: CommandLineParserProcess
- * ----------------------------
- *  Returns void
- *
- *	This function is used to implement the command line interface, when called it fist check to see if the uartReceive buffer has data if so
- *	it will check to see if it is a character or enter value then leave the function.
- *	If it was a enter value, this means a command and arguments has been entered and further action should be take.
- *
- *
+ * FUNCTION: COMMANDLINEPARSERPROCESS
+ * PURPOSE:  TAKES THE INPUT FROM PUTTY AND TURNS IT INTO INDIVIDUAL STRINGS
+ * INPUTS:   NOTHING
+ * OUTPUTS:  THE STRINGS ARE SAVED INTO THE DOUPLE POINTER: ARRAY_OF_WORDS
  */
 void CommandLineParserProcess(void)
 {
-  uint8_t c; //Holds the current input from the uartBuffer, awaiting for further process
-  static uint8_t ArrOfChars[LIMIT]; //Holds the complete string of input from the serial communication
-  static uint8_t i = 0; //Used to increment how many times a user has interface with the command line up until a enter command
-  uint8_t j, count; //Variables used to evaluate the command line input
-  uint8_t **array_of_words_pp; //Pointer to a array which holds pointers to strings
+  uint8_t c; 								//Holds the current input from the uartBuffer, awaiting for further process
+  static uint8_t Arr_Of_Chars[LIMIT]; 		//Holds the complete string of input from the serial communication
+  static uint8_t i = 0; 					//Used to increment how many times a user has interface with the command line up until a enter command
+  uint8_t j, count; 						//Variables used to evaluate the command line input
+  uint8_t **array_of_words_p; 				//Pointer to a array which holds pointers to strings
 
   // Check for input and echo back
   if (HAL_UART_Receive(&huart2, &c, 1, 0x0) == HAL_OK)
@@ -360,7 +390,7 @@ void CommandLineParserProcess(void)
     //Check that the current input Character isn't enter and that the buffer limit hasn't been exceeded
     if(c != 13 && i<100){
     	//All conditions are fine
-    	ArrOfChars[i]= c; //Load the character into the input string if not enter
+    	Arr_Of_Chars[i]= c; //Load the character into the input string if not enter
     	i++; //increment the counter
     }
     else{
@@ -370,15 +400,15 @@ void CommandLineParserProcess(void)
     		printf("\nError to many characters entered in command line\n\r");
     	}
     	//Proceed and terminate string with a null character
-    	ArrOfChars[i]='\0';
+    	Arr_Of_Chars[i]='\0';
     	i = 0; //start from beginning again
 
     	//Now handle the input string and print the results
-    	count = string_parser(ArrOfChars, &array_of_words_pp);
+    	count = string_parser(Arr_Of_Chars, &array_of_words_p);
 
     	if (Debug == 1)
     	{
-    		 printf("\nThe input string was '%s'\n\r",ArrOfChars);
+    		 printf("\nThe input string was '%s'\n\r",Arr_Of_Chars);
     		 //Print the number of arguments entered
     		 printf("--> count = %d\r\n", count);
     	}
@@ -390,16 +420,16 @@ void CommandLineParserProcess(void)
 				//Print out the individual words if arguments entered is larger than 0
 				for (j=0;j<count;j++)
 				{
-				  printf("---> %2d: '%s'\r\n", j+1, (array_of_words_pp)[j]);
+				  printf("---> %2d: '%s'\r\n", j+1, (array_of_words_p)[j]);
 				}
     		}
 
     		//**********************************************************************//
     		//Find out which command was entered and do calculation
         	for(j=0; CommandList[j].NameString != NULL; j++){
-    			if(strcasecmp((char *)array_of_words_pp[0],(char *) CommandList[j].NameString) == 0){
+    			if(strcasecmp((char *)array_of_words_p[0],(char *) CommandList[j].NameString) == 0){
         			//Now do the correct operation based on the match
-        			(*CommandList[j].Function_p)(count, array_of_words_pp);
+        			(*CommandList[j].Function_p)(count, array_of_words_p);
         			break;
     			}
         	}
@@ -415,14 +445,20 @@ void CommandLineParserProcess(void)
 		//Free memory after the calculation process has occurred
     	if (count != 0)
        	{
-       	  free(array_of_words_pp[0]);
-       	  free(array_of_words_pp);
+       	  free(array_of_words_p[0]);
+       	  free(array_of_words_p);
        	}
     }
 
   }
 }
 
+/*
+ * FUNCTION: COMMANDLINEPARSERPROCESS
+ * PURPOSE:  COUNTS THE NUMBER OF WORDS/NUMBERS AND RETURNS THEM INDIVIDUALLY
+ * INPUTS:   ARRAY OF WORDS AND THE INPUT
+ * OUTPUTS:  NUMBER OF WORDS
+ */
 uint8_t string_parser(char *inp, char **array_of_words_p[])
 {
 	uint8_t count = 0;														//word count
