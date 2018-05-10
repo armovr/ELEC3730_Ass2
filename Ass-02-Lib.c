@@ -39,4 +39,7 @@ uint8_t BSP_TP_GetDisplayPoint(Coordinate *pDisplay)
 }
 
 
+
+
+
 #endif
